@@ -7,12 +7,16 @@ class Hand:
         self.value = 0
         self.has_ace = False
         self.insurance_possible = False
+        self.split_possible = False
 
     def add_card(self, card: Card) -> None:
         self.cards.append(card)
     
     def calculate_value(self) -> None:
         self.value = 0
+        if len(self.cards) == 2:
+            if self.cards[0].rank == self.cards[1].rank:
+                self.split_possible = True
         for card in self.cards:
             if card.rank.isnumeric():
                 self.value += int(card.rank)
@@ -51,3 +55,9 @@ class Hand:
             for card in self.cards:
                 print(card.rank, card.suit, end=" ")
             print("Value:", self.get_value())
+    
+    def split() -> tuple:
+        temp = self.cards.pop()
+        new_hand = Hand()
+        new_hand.add_card(temp)
+        return new_hand
