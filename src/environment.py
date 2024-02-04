@@ -50,17 +50,17 @@ class BlackjackEnv(gym.Env):
     def __init__(self):
         super(BlackjackEnv, self).__init__()
 
-        self.game = blackjack.Game()
+        self.game = blackjack.Manager()
         print("Your balance is:", self.game.players[0].balance)
 
         # Define the action and observation space
         # Assuming there are 'n' discrete actions like hit, stand, etc.
-        n = 2  # Replace with the actual number of discrete actions
+        n = 4  # Replace with the actual number of discrete actions
         self.action_space = spaces.Discrete(n)  
         
         # Define the observation space according to your game state
         # Assuming a simple state representation as an example
-        state_size = 5  # Replace with the actual size of the state
+        state_size = 7  # Replace with the actual size of the state
         self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(state_size,), dtype=np.float32)
 
     def step(self, action):
@@ -71,15 +71,16 @@ class BlackjackEnv(gym.Env):
         # ask for action
         # proceed and perhaps repeat the process
         # return the new state, reward, and whether the game is done
-        
-        new_state, reward, done, truncated, info = self.game.play_round(action)
+        print(action)
+        new_state, reward, done, truncated, info = self.game.play_game(action)
         print("Your balance is:", self.game.players[0].balance)
 
         return new_state, reward, done, truncated, info  # Additional info can be returned in the dictionary
     
 
     def reset(self):
-        new_state, info = self.game.init_round()
+        print("NEW GAME")
+        new_state, info = self.game.new_game()
         print("Your balance is:", self.game.players[0].balance)
         return new_state, info
 
@@ -255,10 +256,10 @@ for i_episode in range(num_episodes):
 
         if done:
             episode_durations.append(t + 1)
-            plot_durations()
+            # plot_durations()
             break
 
 print('Complete')
-plot_durations(show_result=True)
-plt.ioff()
-plt.show()
+# plot_durations(show_result=True)
+# plt.ioff()
+# plt.show()
