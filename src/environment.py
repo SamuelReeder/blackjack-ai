@@ -30,6 +30,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 Transition = namedtuple('Transition',
                         ('state', 'action', 'next_state', 'reward'))
 
+balances = []
 
 class ReplayMemory(object):
 
@@ -52,6 +53,7 @@ class BlackjackEnv(gym.Env):
 
         self.game = blackjack.Manager()
         print("Your balance is:", self.game.players[0].balance)
+        balances.append(self.game.players[0].balance)
 
         # Define the action and observation space
         # Assuming there are 'n' discrete actions like hit, stand, etc.
@@ -73,7 +75,8 @@ class BlackjackEnv(gym.Env):
         # return the new state, reward, and whether the game is done
         print(action)
         new_state, reward, done, truncated, info = self.game.play_game(action)
-        print("Your balance is:", self.game.players[0].balance)
+        # print(new_state)
+        # balances.append(info['balance'])
 
         return new_state, reward, done, truncated, info  # Additional info can be returned in the dictionary
     
@@ -81,7 +84,9 @@ class BlackjackEnv(gym.Env):
     def reset(self):
         print("NEW GAME")
         new_state, info = self.game.new_game()
-        print("Your balance is:", self.game.players[0].balance)
+        # print("Your balance is:", self.game.players[0].balance)
+        balances.append(self.game.players[0].balance)
+        
         return new_state, info
 
     def render(self, mode='human'):
@@ -93,11 +98,6 @@ class BlackjackEnv(gym.Env):
         pass
     
 env = BlackjackEnv()
-# state_size = env.observation_space.shape[0]
-# action_size = env.action_space.n
-# model = DQN(state_size, action_size)
-
-
 # BATCH_SIZE is the number of transitions sampled from the replay buffer
 # GAMMA is the discount factor as mentioned in the previous section
 # EPS_START is the starting value of epsilon
@@ -145,26 +145,24 @@ def select_action(state):
     else:
         return torch.tensor([[env.action_space.sample()]], device=device, dtype=torch.long)
 
-
 episode_durations = []
-
 
 def plot_durations(show_result=False):
     plt.figure(1)
-    durations_t = torch.tensor(episode_durations, dtype=torch.float)
+    durations_t = torch.tensor(balances, dtype=torch.float)
     if show_result:
         plt.title('Result')
     else:
         plt.clf()
         plt.title('Training...')
     plt.xlabel('Episode')
-    plt.ylabel('Duration')
+    plt.ylabel('Balance')
     plt.plot(durations_t.numpy())
     # Take 100 episode averages and plot them too
-    if len(durations_t) >= 100:
-        means = durations_t.unfold(0, 100, 1).mean(1).view(-1)
-        means = torch.cat((torch.zeros(99), means))
-        plt.plot(means.numpy())
+    # if len(durations_t) >= 100:
+    #     means = durations_t.unfold(0, 100, 1).mean(1).view(-1)
+    #     means = torch.cat((torch.zeros(99), means))
+    #     plt.plot(means.numpy())
 
     plt.pause(0.001)  # pause a bit so that plots are updated
     if is_ipython:
@@ -220,7 +218,7 @@ def optimize_model():
     torch.nn.utils.clip_grad_value_(policy_net.parameters(), 100)
     optimizer.step()
     
-num_episodes = 10000
+num_episodes = 100000
 
 for i_episode in range(num_episodes):
     # Initialize the environment and get its state
@@ -256,10 +254,20 @@ for i_episode in range(num_episodes):
 
         if done:
             episode_durations.append(t + 1)
-            # plot_durations()
+            plot_durations()
             break
 
+num = 0
+torch.save(policy_net.state_dict(), f'C:/Users/samue/Documents/blackjack-ai/models/model_{str(num)}_policy_net.pth')
+torch.save(target_net.state_dict(), f'C:/Users/samue/Documents/blackjack-ai/models/model_{str(num)}_target_net.pth')
+torch.save({
+    'episode': num_episodes,
+    'model_state_dict': policy_net.state_dict(),
+    'optimizer_state_dict': optimizer.state_dict(),
+}, f'C:/Users/samue/Documents/blackjack-ai/models/model_{str(num)}_checkpoint.pth')
+        
+        
 print('Complete')
-# plot_durations(show_result=True)
-# plt.ioff()
-# plt.show()
+plot_durations(show_result=True)
+plt.ioff()
+plt.show()

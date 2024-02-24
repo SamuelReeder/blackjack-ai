@@ -70,13 +70,6 @@ class Game:
         
         return (self.get_state(self.players[0].hand[0]), False)
         
-    # 0: stay 1: hit, 2: split, 3: insure 
-    # def play_round(self, action: int, index: int = 0) -> tuple:
-    #     player_has_blackjack, dealer_has_blackjack = self.check_for_blackjack()
-    #     if player_has_blackjack:
-    #         self.show_blackjack_results(player_has_blackjack, dealer_has_blackjack)
-    #         return (self.get_state(), 1, True, False, {})
-    
     def dealer_play(self) -> tuple:
         while self.dealer.hand.get_value() < 17:
             self.dealer.hand.add_card(self.deck.deal())
@@ -96,13 +89,11 @@ class Game:
                     player_blackjack, dealer_blackjack, element
                 )
                 self.players[0].change_balance(element.bet)
-
-            # print("Final Results")
-            # print("Your hand:", player_hand_value)
-            # print("Dealer's hand:", dealer_hand_value)
-
+                continue
+                
             if self.player_is_over(element):
                 print("You have lost!")
+                continue
             if dealer_hand_value > 21:
                 print("Dealer busts! You win!")
                 self.players[0].change_balance(element.bet * 2)
@@ -147,7 +138,7 @@ class Game:
                 self.players[0].change_balance(hand.bet)
         elif player_has_blackjack:
             print("You win!")
-            self.players[0].change_balance(hand.bet * 2)
+            self.players[0].change_balance(hand.bet * 2.5)
         elif dealer_has_blackjack:
             print("Dealer wins!")
             if self.players[0].insurance:
@@ -159,5 +150,5 @@ class Game:
             self.queue_shuffle = False
     
     def get_state(self, hand: Hand) -> tuple:
-        print("Hand value:", hand.get_value(), "Dealer's hand value:", self.dealer.hand.get_value(), "Current count:", self.deck.current_count, "Face tally:", self.deck.face_tally, "Deck length:", len(self.deck.cards), "Insurance possible:", self.dealer.hand.insurance_possible, "Split possible:", hand.split_possible)
-        return (hand.get_value(), self.dealer.hand.get_value(), self.deck.current_count, self.deck.face_tally, len(self.deck.cards), self.dealer.hand.insurance_possible, hand.split_possible)
+        # print("Hand value:", hand.get_value(), "Dealer's hand value:", self.dealer.hand.get_value(), "Current count:", self.deck.current_count, "Face tally:", self.deck.face_tally, "Deck length:", len(self.deck.cards), "Insurance possible:", self.dealer.hand.insurance_possible, "Split possible:", hand.split_possible)
+        return (hand.get_value(), self.dealer.hand.get_value(one_card=True), self.deck.current_count, self.deck.face_tally, len(self.deck.cards), self.dealer.hand.insurance_possible, hand.split_possible)

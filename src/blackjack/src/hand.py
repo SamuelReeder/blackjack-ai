@@ -31,8 +31,8 @@ class Hand:
         if self.has_ace and self.value > 21:
             self.value -= 10
 
-    def get_value(self) -> int:
-        self.calculate_value()
+    def get_value(self, one_card: bool = False) -> int:
+        self.calculate_value(hide_dealer=one_card)
         return self.value
     
     def reset(self) -> None:
