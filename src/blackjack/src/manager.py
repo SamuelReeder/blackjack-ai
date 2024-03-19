@@ -41,7 +41,7 @@ class Manager:
             self.current_game.dealer_play()
             return self.current_game.end()
         
-        redundant = -1 if (not curr_hand.split_possible and action == 3) or (not curr_hand.insurance_possible and action == 2) else 0
+        redundant = -10 if (not curr_hand.split_possible and action == 3) or (not curr_hand.insurance_possible and action == 2) else 0
         
         return self.current_game.get_state(curr_hand), redundant, False, False, {}
             

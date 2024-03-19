@@ -52,13 +52,13 @@ class Hand:
                     self.split_possible = True
             for card in self.cards:
                 print(card.rank, card.suit, end=" ")
-            print("Value:", self.get_value())
+            # print("Value:", self.get_value())
             
                 
         else:
             for card in self.cards:
                 print(card.rank, card.suit, end=" ")
-            print("Value:", self.get_value())
+            # print("Value:", self.get_value())
     
     def split() -> tuple:
         temp = self.cards.pop()
