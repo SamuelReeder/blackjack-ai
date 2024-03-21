@@ -1,7 +1,7 @@
 import matplotlib
 import matplotlib.pyplot as plt
 import torch
-from environment import BlackjackEnv, select_action
+from environment import BlackjackEnv, ReplayMemory
 from network import DQN
 import numpy as np
 
@@ -145,4 +145,4 @@ def test(num_test_episodes, policy_net, env, device):
 print("Testing the model...")
 test(1000, policy_net, env, device)
 
-print(outcomes)
+# print(outcomes)
