@@ -31,6 +31,11 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 Transition = namedtuple('Transition',
                         ('state', 'action', 'next_state', 'reward'))
 
+if len(sys.argv) < 2:
+    print("Please provide a number to save the model")
+    sys.exit(1)
+num = argv[1]
+
 balances = []
 
 
@@ -157,7 +162,7 @@ def optimize_model():
     torch.nn.utils.clip_grad_value_(policy_net.parameters(), 100)
     optimizer.step()
     
-num_episodes = 100000
+num_episodes = 35000
 
 def run(random: bool = False) -> None:
     for i_episode in range(num_episodes):
@@ -201,7 +206,6 @@ def run(random: bool = False) -> None:
 
 run()
 
-num = 5
 torch.save(policy_net.state_dict(), f'C:/Users/samue/Documents/blackjack-ai/models/model_{str(num)}_policy_net.pth')
 torch.save(target_net.state_dict(), f'C:/Users/samue/Documents/blackjack-ai/models/model_{str(num)}_target_net.pth')
 torch.save({

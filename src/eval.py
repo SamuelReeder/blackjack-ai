@@ -25,7 +25,7 @@ n_observations = len(state)
 policy_net = DQN(n_observations, n_actions).to(device)
 
 # Assuming policy_net is your model and has the same architecture as the saved one
-policy_net.load_state_dict(torch.load('./models/model_5_policy_net.pth'))
+policy_net.load_state_dict(torch.load('../models/model_5_policy_net.pth'))
 
 policy_net.eval()  # Set the network to evaluation mode
 
@@ -143,6 +143,6 @@ def test(num_test_episodes, policy_net, env, device):
     return avg_reward
 
 print("Testing the model...")
-test(1000, policy_net, env, device)
+test(10000, policy_net, env, device)
 
 # print(outcomes)
