@@ -7,6 +7,7 @@ import numpy as np
 import blackjack
 from network import DQN
 import math
+import sys
 import random
 from collections import namedtuple, deque
 from itertools import count
@@ -34,7 +35,7 @@ Transition = namedtuple('Transition',
 if len(sys.argv) < 2:
     print("Please provide a number to save the model")
     sys.exit(1)
-num = argv[1]
+num = sys.argv[1]
 
 balances = []
 
@@ -162,7 +163,7 @@ def optimize_model():
     torch.nn.utils.clip_grad_value_(policy_net.parameters(), 100)
     optimizer.step()
     
-num_episodes = 35000
+num_episodes = 150000
 
 def run(random: bool = False) -> None:
     for i_episode in range(num_episodes):
