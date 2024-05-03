@@ -17,25 +17,20 @@ cd blackjack-ai
 pip install -r requirements.txt
 ```
 
-Training the Model
-
+## Training the Model
 To train a new model, use the following command, replacing <model_num> with the desired model number:
-
 ```
 py run.py <model_num>
 ```
 
-Evaluating the Model
-
+## Evaluating the Model
 To evaluate the performance of a trained model, use the same model number with the evaluation script:
-
 ```
 py eval.py <model_num>
 ```
 
-Results
-
+## Results
 The best current model achieves a win rate of 52.75% over an evaluation set of 50,000 games.
-Contributing
 
+## Contributing
 Contributions to this project are welcome. Please open an issue or submit a pull request.
