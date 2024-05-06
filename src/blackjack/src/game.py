@@ -54,7 +54,7 @@ class Game:
         
         for i in range(2):
             card0 = self.deck.deal()
-            if card0.rank == "Yellow":
+            if card0.rank == -1:
                 self.queue_shuffle = True
                 card0 = self.deck.deal()
             card1 = self.deck.deal()
@@ -167,4 +167,4 @@ class Game:
     
     def get_state(self, hand: Hand) -> tuple:
         # print("Hand value:", hand.get_value(), "Dealer's hand value:", self.dealer.hand.get_value(), "Current count:", self.deck.current_count, "Face tally:", self.deck.face_tally, "Deck length:", len(self.deck.cards), "Insurance possible:", self.dealer.hand.insurance_possible, "Split possible:", hand.split_possible)
-        return (hand.get_value(), self.dealer.hand.get_value(one_card=True), self.deck.current_count, self.deck.face_tally, len(self.deck.cards), self.dealer.hand.insurance_possible, hand.split_possible)
+        return [hand.get_value(), self.dealer.hand.get_value(one_card=True), self.deck.current_count, self.deck.face_tally, len(self.deck.cards), self.deck.card_arr] # , self.dealer.hand.insurance_possible, hand.split_possible

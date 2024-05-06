@@ -39,12 +39,12 @@ class BlackjackEnv(gym.Env):
 
         # Define the action and observation space
         # Assuming there are 'n' discrete actions like hit, stand, etc.
-        n = 4  # Replace with the actual number of discrete actions
+        n = 2  # 4 in reality but try with just hit and stand
         self.action_space = spaces.Discrete(n)  
         
         # Define the observation space according to your game state
         # Assuming a simple state representation as an example
-        state_size = 7  # Replace with the actual size of the state
+        state_size = 15  # Replace with the actual size of the state
         self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(state_size,), dtype=np.float32)
 
     def step(self, action):
@@ -57,19 +57,29 @@ class BlackjackEnv(gym.Env):
         # return the new state, reward, and whether the game is done
         print(action)
         new_state, reward, done, truncated, info = self.game.play_game(action)
+        print(new_state)
         # print(new_state)
         # balances.append(info['balance'])
+        integers = np.array(new_state[:-1], dtype=np.float32)  # Convert the integer elements
+        last_list = np.array(new_state[-1], dtype=np.float32)  # Convert the last element which is a list
+        flattened_state = np.concatenate((integers, last_list))  # Concatenate both arrays
 
-        return new_state, reward, done, truncated, info  # Additional info can be returned in the dictionary
+
+        return flattened_state, reward, done, truncated, info  # Additional info can be returned in the dictionary
     
 
     def reset(self):
         print("NEW GAME")
         new_state, info = self.game.new_game()
+        print(new_state)
         # print("Your balance is:", self.game.players[0].balance)
         self.balances.append(self.game.players[0].balance)
-        
-        return new_state, info
+        # Explicitly create a numpy array from the integers, then concatenate the last list
+        integers = np.array(new_state[:-1], dtype=np.float32)  # Convert the integer elements
+        last_list = np.array(new_state[-1], dtype=np.float32)  # Convert the last element which is a list
+        flattened_state = np.concatenate((integers, last_list))  # Concatenate both arrays
+
+        return flattened_state, info
 
     def render(self, mode='human'):
         # Implement this if you want to display the game state in a human-readable format

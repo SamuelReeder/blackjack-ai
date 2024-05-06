@@ -4,6 +4,12 @@ import torch
 from environment import BlackjackEnv, ReplayMemory
 from network import DQN
 import numpy as np
+import sys
+
+if len(sys.argv) < 2:
+    print("Please provide a number to save the model")
+    sys.exit(1)
+num = sys.argv[1]
 
 # set up matplotlib
 is_ipython = 'inline' in matplotlib.get_backend()
@@ -25,7 +31,7 @@ n_observations = len(state)
 policy_net = DQN(n_observations, n_actions).to(device)
 
 # Assuming policy_net is your model and has the same architecture as the saved one
-policy_net.load_state_dict(torch.load('../models/model_5_policy_net.pth'))
+policy_net.load_state_dict(torch.load(f'../models/model_{str(num)}_policy_net.pth'))
 
 policy_net.eval()  # Set the network to evaluation mode
 
