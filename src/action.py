@@ -9,6 +9,8 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.action_chains import ActionBuilder
 import pytesseract
 from PIL import Image
+import cv2
+
 
 class ActionInterface:
     def __init__(self, data):
@@ -41,12 +43,8 @@ class ActionInterface:
                 #     print('Tag:', action['tag'])
                 #     element = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.TAG_NAME, action['tag'])))
                 else:
-                    # Move cursor to x, y position and click
                     x = action['position']['x']
                     y = action['position']['y']
-
-                    # # Get the last clicked element
-                    # Move to position (64,60) and click() at that position (Note: you will not see your mouse move)
                     action = ActionBuilder(self.driver)
                     action.pointer_action.move_to_location(x, y)
                     action.pointer_action.click()
@@ -63,16 +61,72 @@ class ActionInterface:
                 
             sleep(1)
                 
-    def scan(self):
-        # element = self.driver.find_element(By.CSS_SELECTOR, 'body')
+    def scan_cards(self):
 
-        # element.screenshot('element.png')
         self.driver.get_screenshot_as_file('element.png')
+        img = cv2.imread('element.png')
+
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        blur = cv2.GaussianBlur(gray, (5,5), 0)
+        contrast = cv2.convertScaleAbs(blur, alpha=2.0, beta=50)
+        kernel = np.array([[0, -1, 0], [-1, 5,-1], [0, -1, 0]])
+        sharpened = cv2.filter2D(contrast, -1, kernel)
+        _, thresh = cv2.threshold(gray, 120, 255, cv2.THRESH_BINARY_INV)
+        
+        cv2.imwrite('element.png', thresh)
+        
+        processed_img = Image.open('element.png')
+
+        area_one = (720, 450, 1000, 660)  
+        area_two = (1450, 450, 1850, 550) 
+
+        cropped_img_one = processed_img.crop(area_one)
+        cropped_img_two = processed_img.crop(area_two)
+
+        cropped_img_one.save('cropped_img_one.png')
+        cropped_img_two.save('cropped_img_two.png')
 
 
-        pytesseract.pytesseract.tesseract_cmd = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'  # Update this path
+def detect_document(path):
+    """Detects document features in an image."""
 
-        # Perform OCR on the screenshot
-        img = Image.open('element.png')
-        text = pytesseract.image_to_string(img)
-        print(text)
+    client = vision.ImageAnnotatorClient()
+
+    with open(path, "rb") as image_file:
+        content = image_file.read()
+
+    image = vision.Image(content=content)
+
+    response = client.document_text_detection(image=image)
+
+    words = []
+    for page in response.full_text_annotation.pages:
+        for block in page.blocks:
+            # print(f"\nBlock confidence: {block.confidence}\n")
+
+            for paragraph in block.paragraphs:
+                # print("Paragraph confidence: {}".format(paragraph.confidence))
+
+                for word in paragraph.words:
+                    word_text = "".join([symbol.text for symbol in word.symbols])
+                    # print(
+                    #     "Word text: {} (confidence: {})".format(
+                    #         word_text, word.confidence
+                    #     )
+                    # )
+                    words.append(word_text)
+
+                    # for symbol in word.symbols:
+                    #     print(
+                    #         "\tSymbol: {} (confidence: {})".format(
+                    #             symbol.text, symbol.confidence
+                    #         )
+                    #     )
+
+    if response.error.message:
+        raise Exception(
+            "{}\nFor more info on error messages, check: "
+            "https://cloud.google.com/apis/design/errors".format(response.error.message)
+        )
+        
+    return words
