@@ -2,7 +2,7 @@ from .hand import Hand
 
 class Player:
     def __init__(self, balance: int = 1000000000):
-        self.hand: List[Hand] = [Hand()]
+        self.hand = Hand()
         self.balance = balance
         self.insurance = False
         self.split = False

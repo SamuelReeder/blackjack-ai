@@ -1,7 +1,8 @@
 import matplotlib
 import matplotlib.pyplot as plt
 import torch
-from environment import BlackjackEnv, ReplayMemory
+from environment import ReplayMemory
+from online_env import OnlineBlackjackEnv
 from network import DQN
 import numpy as np
 import sys
@@ -13,7 +14,7 @@ num = sys.argv[1]
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-env = BlackjackEnv()
+env = OnlineBlackjackEnv()
 
 # Get number of actions from gym action space
 n_actions = env.action_space.n
@@ -28,12 +29,9 @@ policy_net.load_state_dict(torch.load(f'../models/model_{str(num)}_policy_net.pt
 
 policy_net.eval()  # Set the network to evaluation mode
 
-balances = []
-
-
 
 def test(num_test_episodes, policy_net, env, device):
-    total_rewards = []  # To store total rewards for each episode
+    # total_rewards = []  # To store total rewards for each episode
 
     for i_episode in range(num_test_episodes):
         # Initialize the environment and state
@@ -47,9 +45,7 @@ def test(num_test_episodes, policy_net, env, device):
                 action = policy_net(state).max(1)[1].view(1, 1)
             
             # Perform action in env
-            next_state, reward, terminated, truncated, _ = env.step(action.item())
-            balances.append(env.game.players[0].balance)
-            
+            next_state, reward, terminated, truncated, _ = env.step(action.item())            
             episode_reward += reward
 
             if terminated or truncated:
@@ -60,12 +56,12 @@ def test(num_test_episodes, policy_net, env, device):
             next_state = torch.tensor([next_state], device=device, dtype=torch.float32)
             state = next_state
 
-        total_rewards.append(episode_reward)  # Store the total reward for this episode
+        # total_rewards.append(episode_reward)  # Store the total reward for this episode
 
-    # Calculate and print the average reward
-    avg_reward = sum(total_rewards) / len(total_rewards)
-    print(f"Average Reward over {num_test_episodes} episodes: {avg_reward:.2f}")
-    return avg_reward
+    # # Calculate and print the average reward
+    # avg_reward = sum(total_rewards) / len(total_rewards)
+    # print(f"Average Reward over {num_test_episodes} episodes: {avg_reward:.2f}")
+    # return avg_reward
 
 print("Testing the model...")
 test(10000, policy_net, env, device)

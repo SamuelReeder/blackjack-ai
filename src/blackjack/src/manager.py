@@ -21,7 +21,7 @@ class Manager:
         wins, losses = 0, 0
         
         hand_index = 0
-        curr_hand = self.players[0].hand[0]
+        curr_hand = self.players[0].hand
         for i, element in enumerate(self.players[0].hand):
             if not element.complete:
                 curr_hand = element
