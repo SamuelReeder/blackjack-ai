@@ -1,0 +1,109 @@
+{
+  "start": {
+    "steps": [
+      {
+        "action": "click",
+        "tag": "H3",
+        "type": "N/A",
+        "id": "none",
+        "classes": "none",
+        "position": {
+          "x": 650,
+          "y": 700
+        }
+      },
+      {
+        "action": "click",
+        "tag": "H3",
+        "type": "N/A",
+        "id": "none",
+        "classes": "none",
+        "position": {
+          "x": 650,
+          "y": 700
+        }
+      }
+    ],
+    "url": "https://www.247blackjack.com/"
+  },
+  "bet": {
+    "steps": [
+      {
+        "action": "click",
+        "tag": "DIV",
+        "type": "N/A",
+        "id": "none",
+        "classes": "none",
+        "position": {
+          "x": 369,
+          "y": 528
+        }
+      }
+    ],
+    "url": "none"
+  },
+  "deal": {
+    "steps": [
+      {
+        "action": "click",
+        "tag": "DIV",
+        "type": "N/A",
+        "id": "none",
+        "classes": "none",
+        "position": {
+          "x": 667,
+          "y": 666
+        }
+      }
+    ],
+    "url": "none"
+  },
+  "hit": {
+    "steps": [
+      {
+        "action": "click",
+        "tag": "DIV",
+        "type": "N/A",
+        "id": "none",
+        "classes": "none",
+        "position": {
+          "x": 671,
+          "y": 668
+        }
+      }
+    ],
+    "url": "none"
+  },
+  "stand": {
+    "steps": [
+      {
+        "action": "click",
+        "tag": "DIV",
+        "type": "N/A",
+        "id": "rail-column",
+        "classes": "col-1-4 ucsRailContainer ",
+        "position": {
+          "x": 1208,
+          "y": 666
+        }
+      }
+    ],
+    "url": "none"
+  },
+  "next": {
+    "steps": [
+      {
+        "action": "click",
+        "tag": "DIV",
+        "type": "N/A",
+        "id": "none",
+        "classes": "none",
+        "position": {
+          "x": 1000,
+          "y": 666
+        }
+      }
+    ],
+    "url": "none"
+  }
+}

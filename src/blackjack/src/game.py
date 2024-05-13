@@ -27,7 +27,7 @@ class Game:
          if self.dealer.hand.insurance_possible:
             if self.debug: 
                 print("Insuring!")
-            self.players[0].change_balance(-self.players[0].hand[0].bet / 2)
+            self.players[0].change_balance(-self.players[0].hand.bet / 2)
             self.players[0].insurance = True
             self.dealer.hand.insurance_possible = False
             
@@ -46,11 +46,11 @@ class Game:
         self.initial_balance = self.players[0].balance
         self.check_shuffle()
 
-        self.players[0].hand[0] = Hand()
+        self.players[0].hand = Hand()
         self.dealer.hand = Hand(dealer=True)
 
-        self.players[0].hand[0].bet = 100
-        self.players[0].change_balance(-self.players[0].hand[0].bet)
+        self.players[0].hand.bet = 100
+        self.players[0].change_balance(-self.players[0].hand.bet)
         
         for i in range(2):
             card0 = self.deck.deal()
@@ -59,21 +59,21 @@ class Game:
                 card0 = self.deck.deal()
             card1 = self.deck.deal()
 
-            self.players[0].hand[0].add_card(card0)
+            self.players[0].hand.add_card(card0)
             self.dealer.hand.add_card(card1)
         if self.debug:
-            print("Your hand[0] is:")
-        self.players[0].hand[0].display()
+            print("Your hand is:")
+        self.players[0].hand.display()
         if self.debug:
             print("Dealer's hand is:")
         self.dealer.hand.display()
         
         player_has_blackjack, dealer_has_blackjack = self.check_for_blackjack(0)
         if player_has_blackjack:
-            self.show_blackjack_results(player_has_blackjack, dealer_has_blackjack, self.players[0].hand[0])
-            return (self.get_state(self.players[0].hand[0]), True)
+            self.show_blackjack_results(player_has_blackjack, dealer_has_blackjack, self.players[0].hand)
+            return (self.get_state(self.players[0].hand), True)
         
-        return (self.get_state(self.players[0].hand[0]), False)
+        return (self.get_state(self.players[0].hand), False)
         
     def dealer_play(self) -> tuple:
         while self.dealer.hand.get_value() < 17:
@@ -117,7 +117,7 @@ class Game:
                 if self.debug:
                     print("Dealer Wins!")
                 
-        return (self.get_state(self.players[0].hand[0]), self.players[0].balance - self.initial_balance , True, False, {})
+        return (self.get_state(self.players[0].hand), self.players[0].balance - self.initial_balance , True, False, {})
 
     def player_is_over(self, hand: Hand) -> bool:
         return hand.get_value() > 21
@@ -136,7 +136,7 @@ class Game:
             if self.dealer.hand.get_value() == 21:
                 if self.debug:
                     print("Dealer has blackjack! You get your insurance!")
-                self.players[0].change_balance(self.players[0].hand[0].bet)
+                self.players[0].change_balance(self.players[0].hand.bet)
             else:
                 if self.debug:                    
                     print("Dealer does not have blackjack! You lose your insurance!")
