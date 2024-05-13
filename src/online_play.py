@@ -14,6 +14,7 @@ num = sys.argv[1]
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+print("here")
 env = OnlineBlackjackEnv()
 
 # Get number of actions from gym action space
@@ -25,8 +26,9 @@ n_observations = len(state)
 policy_net = DQN(n_observations, n_actions).to(device)
 
 # Assuming policy_net is your model and has the same architecture as the saved one
-policy_net.load_state_dict(torch.load(f'../models/model_{str(num)}_policy_net.pth'))
+policy_net.load_state_dict(torch.load(f'models\\model_{str(num)}_policy_net.pth'))
 
+print("loaded model")
 policy_net.eval()  # Set the network to evaluation mode
 
 

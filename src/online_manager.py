@@ -19,16 +19,12 @@ class OnlineManager:
         # self.current_game = Game(self.players, self.dealer, self.deck)
         # return self.current_game.init_round()
         self.action_interface.execute("start")
-        print("Game started")
         self.action_interface.execute("bet")
-        print("Bet placed")
-        self.deal()
+        # self.deal()
     
     def deal(self) -> None:
-        print("Dealing")
         self.action_interface.execute("next")
         self.action_interface.execute("deal")
-        print("Dealt")
         sleep(2)
         self.action_interface.scan_cards()
         self.get_cards()
@@ -41,14 +37,10 @@ class OnlineManager:
         self.yield_cards(dealer)
         print(dealer)
         for card in player:
-            print(card)
-            print(type(card))
             self.player.hand.add_card(Card(card))
             self.deck.remove_card(Card(card))
             # check if player has blackjack
         for card in dealer:
-            print(card)
-            print(type(card))
             self.dealer.hand.add_card(Card(card))
             self.deck.remove_card(Card(card))
 
@@ -65,13 +57,25 @@ class OnlineManager:
                 
         match action:
             case 0:
-                self.current_game.stay(curr_hand)
+                self.stay()
+                sleep(2)
+                return self.get_state(), False, True, False, {}
             case 1:
-                self.current_game.hit(curr_hand)
-            case 2:
-                self.current_game.split(curr_hand)
-            case 3:
-                self.current_game.insure()
+                self.hit()
+                sleep(2)
+                value = self.player.hand.get_value()
+                dealer_value = self.dealer.hand.get_value()
+                if value > 21:
+                    return self.get_state(), False, True, False, {}
+                elif value == 21:
+                    return self.get_state(), True, True, False, {}
+                elif dealer_value == 21:
+                    return self.get_state(), False, True, False, {}
+                
+            # case 2:
+            #     self.split(curr_hand)
+            # case 3:
+            #     self.insure()
         
         # if curr_hand.complete and hand_index == len(self.players[0].hand) - 1:
         #     self.current_game.dealer_play()
@@ -81,31 +85,32 @@ class OnlineManager:
         
         return self.get_state(curr_hand), False, False, False, {}
     
-    def hit(self, hand: Hand) -> None:
+    def hit(self) -> None:
         self.action_interface.execute("hit")
         sleep(1)
-        action_interface.scan_cards()
+        self.action_interface.scan_cards()
         self.get_cards()
             
     def yield_cards(self, cards):
         for i in range(len(cards)):
             try :
                 cards[i] = int(cards[i])
+                if cards[i] == 0:
+                    cards[i] = 10
             except:
                 if cards[i] == 'A':
-                    cards[i] = 11
+                    cards[i] = 1
                 else:
                     cards[i] = 10
         
     
-    def stay(self, hand: Hand) -> None:
+    def stay(self) -> None:
         self.action_interface.execute("stand")
-        hand.complete = True
         # then do next game
         
     def get_state(self) -> tuple:
         # print("Hand value:", hand.get_value(), "Dealer's hand value:", self.dealer.hand.get_value(), "Current count:", self.deck.current_count, "Face tally:", self.deck.face_tally, "Deck length:", len(self.deck.cards), "Insurance possible:", self.dealer.hand.insurance_possible, "Split possible:", hand.split_possible)
-        return [self.hand.get_value(), self.dealer.hand.get_value(one_card=True), self.deck.current_count, self.deck.face_tally, len(self.deck.cards), self.deck.card_arr] # , self.dealer.hand.insurance_possible, hand.split_possible
+        return [self.player.hand.get_value(), self.dealer.hand.get_value(one_card=True), self.deck.current_count, self.deck.face_tally, len(self.deck.cards), self.deck.card_arr] # , self.dealer.hand.insurance_possible, hand.split_possible
         
             
     

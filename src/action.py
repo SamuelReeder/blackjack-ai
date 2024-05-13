@@ -30,13 +30,12 @@ class ActionInterface:
     def execute(self, name):
         if self.data[name]['url'] != 'none':
             self.driver.get(self.data[name]['url'])
-        sleep(3)
+            sleep(3)
 
         for action in self.data[name]['steps']:
             if action['action'] == 'click':
                 element = None
                 if action['id'] != 'none':
-                    print('ID:', action['id'])
                     element = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.ID, action['id'])))
                 # elif action['classes'] != 'none':
                 #     print('Classes:', action['classes'])
@@ -58,7 +57,6 @@ class ActionInterface:
                     self.last_clicked_element = element
 
             elif action['action'] == 'keydown' and self.last_clicked_element is not None:
-                print('Key:', action['key'])
                 self.last_clicked_element.send_keys(action['key'])
                 
             sleep(1)
@@ -79,7 +77,7 @@ class ActionInterface:
         
         processed_img = Image.open('element.png')
 
-        area_one = (720, 450, 1000, 660)  
+        area_one = (720, 450, 1150, 660)  
         area_two = (1450, 450, 1850, 550) 
 
         cropped_img_one = processed_img.crop(area_one)

@@ -25,6 +25,8 @@ class OnlineBlackjackEnv(gym.Env):
         # Assuming a simple state representation as an example
         state_size = 15  # Replace with the actual size of the state
         self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(state_size,), dtype=np.float32)
+        # self.game.new_game()
+
 
     def step(self, action):
         
@@ -33,10 +35,8 @@ class OnlineBlackjackEnv(gym.Env):
         # make necessary checks
         # ask for action
         # proceed and perhaps repeat the process
-        # return the new state, reward, and whether the game is done
         print(action)
         new_state, reward, done, truncated, info = self.game.play_game(action)
-        print(new_state)
         # print(new_state)
         # balances.append(info['balance'])
         integers = np.array(new_state[:-1], dtype=np.float32)  # Convert the integer elements
@@ -51,14 +51,14 @@ class OnlineBlackjackEnv(gym.Env):
         print("NEW GAME")
         self.game.new_game()
         self.game.deal()
-        new_state, info = self.game.get_state()
+        new_state = self.game.get_state()
         print(new_state)
         # Explicitly create a numpy array from the integers, then concatenate the last list
         integers = np.array(new_state[:-1], dtype=np.float32)  # Convert the integer elements
         last_list = np.array(new_state[-1], dtype=np.float32)  # Convert the last element which is a list
         flattened_state = np.concatenate((integers, last_list))  # Concatenate both arrays
 
-        return flattened_state, info
+        return flattened_state, {}
 
     def render(self, mode='human'):
         # Implement this if you want to display the game state in a human-readable format
