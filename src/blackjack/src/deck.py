@@ -11,7 +11,7 @@ class Deck:
         random.shuffle(self.cards)
         
     def reset(self) -> None:
-        self.cards = [Card(v) for v in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10] * 4]
+        self.cards = [v for v in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10] * 4]
         self.cards = self.cards * 6
         self.number_of_decks = 6
         self.original_length = len(self.cards)
@@ -22,16 +22,16 @@ class Deck:
         self.card_dict = {}
         self.card_arr = [0] * 10
         self.init_card_dict()
-        self.cards.insert(random.randrange(len(self.cards) // 2 + 1, len(self.cards)), Card(-1))
+        self.cards.insert(random.randrange(len(self.cards) // 2 + 1, len(self.cards)), -1)
         
         
     def update_count(self, card: Card) -> None:
-        if card.rank in [2, 3, 4, 5, 6]:
+        if card in [2, 3, 4, 5, 6]:
             self.current_count += 1
             cards_left = self.number_of_decks - ((self.original_length - len(self.cards))) 
             if cards_left != 0:
                 self.true_count = self.current_count / (cards_left / 52)
-        elif card.rank == 10 or card.rank == 1:
+        elif card == 10 or card == 1:
             self.current_count -= 1
             self.true_count -= 1
 
@@ -46,23 +46,23 @@ class Deck:
         
         card = self.cards.pop()
         
-        if card.rank != -1:
-            self.card_dict[card.rank] -= 1
-            self.card_arr[card.rank - 1] -= 1
+        if card != -1:
+            self.card_dict[card] -= 1
+            self.card_arr[card - 1] -= 1
             self.update_count(card)
         return card
     
     def init_card_dict(self) -> None:
         for card in self.cards:
-            if card.rank in self.card_dict:
-                self.card_dict[card.rank] += 1
-                self.card_arr[card.rank - 1] += 1
+            if card in self.card_dict:
+                self.card_dict[card] += 1
+                self.card_arr[card - 1] += 1
             else:
-                self.card_dict[card.rank] = 1
-                print(card.rank)
-                self.card_arr[card.rank - 1] = 1
+                self.card_dict[card] = 1
+                self.card_arr[card - 1] = 1
                 
     def remove_card(self, card: Card) -> None:
-        self.card_dict[card.rank] -= 1
-        self.card_arr[card.rank - 1] -= 1
+        print("Removing card:", card)
+        self.card_dict[card] -= 1
+        self.card_arr[card - 1] -= 1
         self.update_count(card)

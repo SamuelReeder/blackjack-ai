@@ -35,30 +35,33 @@ class OnlineBlackjackEnv(gym.Env):
         # make necessary checks
         # ask for action
         # proceed and perhaps repeat the process
-        print(action)
+        print('Action:', action)
         new_state, reward, done, truncated, info = self.game.play_game(action)
         # print(new_state)
         # balances.append(info['balance'])
-        integers = np.array(new_state[:-1], dtype=np.float32)  # Convert the integer elements
-        last_list = np.array(new_state[-1], dtype=np.float32)  # Convert the last element which is a list
-        flattened_state = np.concatenate((integers, last_list))  # Concatenate both arrays
+        array = np.array(new_state, dtype=object)
+        flat_array = np.hstack(array)
+        print("State:", flat_array)
 
 
-        return flattened_state, reward, done, truncated, info  # Additional info can be returned in the dictionary
+        return flat_array, reward, done, truncated, info  # Additional info can be returned in the dictionary
     
 
     def reset(self):
-        print("NEW GAME")
+        print("Starting new game:")
         self.game.new_game()
         self.game.deal()
         new_state = self.game.get_state()
-        print(new_state)
         # Explicitly create a numpy array from the integers, then concatenate the last list
-        integers = np.array(new_state[:-1], dtype=np.float32)  # Convert the integer elements
-        last_list = np.array(new_state[-1], dtype=np.float32)  # Convert the last element which is a list
-        flattened_state = np.concatenate((integers, last_list))  # Concatenate both arrays
+        
+        # Convert the list and nested list to NumPy arrays
+        array = np.array(new_state, dtype=object)
 
-        return flattened_state, {}
+        # Flatten the array
+        flat_array = np.hstack(array)
+        print("State:", flat_array)
+
+        return flat_array, {}
 
     def render(self, mode='human'):
         # Implement this if you want to display the game state in a human-readable format

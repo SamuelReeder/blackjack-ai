@@ -71,7 +71,7 @@ class BlackjackEnv(gym.Env):
     def reset(self):
         print("NEW GAME")
         new_state, info = self.game.new_game()
-        print(new_state)
+        print("State:", new_state)
         # print("Your balance is:", self.game.players[0].balance)
         self.balances.append(self.game.players[0].balance)
         # Explicitly create a numpy array from the integers, then concatenate the last list

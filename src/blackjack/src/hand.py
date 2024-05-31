@@ -19,10 +19,10 @@ class Hand:
         for i, card in enumerate(self.cards):
             if self.dealer and i > 0 and hide_dealer:
                 break
-            if card.rank < 10 and card.rank > 1:
-                self.value += int(card.rank)
+            if card < 10 and card > 1:
+                self.value += int(card)
             else:
-                if card.rank == 1:
+                if card == 1:
                     self.has_ace = True
                     self.value += 11
                 else:
@@ -51,13 +51,13 @@ class Hand:
                 if self.cards[0].rank == self.cards[1].rank:
                     self.split_possible = True
             for card in self.cards:
-                print(card.rank, end=" ")
+                print(card, end=" ")
             # print("Value:", self.get_value())
             
                 
         else:
             for card in self.cards:
-                print(card.rank, end=" ")
+                print(card, end=" ")
             # print("Value:", self.get_value())
     
     def split() -> tuple:

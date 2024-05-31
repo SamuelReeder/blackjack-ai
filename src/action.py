@@ -7,7 +7,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.action_chains import ActionBuilder
-import pytesseract
+from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
+from selenium.webdriver.firefox.options import Options
 from google.cloud import vision
 from PIL import Image
 import numpy as np
@@ -18,8 +19,21 @@ class ActionInterface:
     def __init__(self, data):
         self.load_data(data)
         self.last_clicked_element = None
-        self.driver = webdriver.Firefox()
+        profile = FirefoxProfile()
+        profile.add_extension(extension='C:\\Users\\samue\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\tzyolyy7.default-release\\extensions\\{d10d0bf8-f5b5-c8b4-a8b2-2b9879e08c5d}.xpi')
+        
+        
+        options = Options()
+        options.profile = profile
+
+        self.driver = webdriver.Firefox(options=options)
+        self.driver.install_addon('C:\\Users\\samue\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\tzyolyy7.default-release\\extensions\\{d10d0bf8-f5b5-c8b4-a8b2-2b9879e08c5d}.xpi', temporary=False)
+        
         self.driver.maximize_window()
+        sleep(1)
+        self.driver.switch_to.window(self.driver.window_handles[1])
+        self.driver.close()
+        self.driver.switch_to.window(self.driver.window_handles[0])
 
 
     def load_data(self, data):
@@ -28,6 +42,13 @@ class ActionInterface:
         
 
     def execute(self, name):
+        
+        if len(self.driver.window_handles) > 1:
+            self.driver.switch_to.window(self.driver.window_handles[1])
+            self.driver.close()
+            self.driver.switch_to.window(self.driver.window_handles[0])
+            
+        print('Executing:', name)
         if self.data[name]['url'] != 'none':
             self.driver.get(self.data[name]['url'])
             sleep(3)
@@ -77,8 +98,8 @@ class ActionInterface:
         
         processed_img = Image.open('element.png')
 
-        area_one = (720, 450, 1150, 660)  
-        area_two = (1450, 450, 1850, 550) 
+        area_one = (500, 450, 1000, 660)  
+        area_two = (1230, 450, 1700, 550) 
 
         cropped_img_one = processed_img.crop(area_one)
         cropped_img_two = processed_img.crop(area_two)

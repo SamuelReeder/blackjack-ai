@@ -16,11 +16,10 @@ class OnlineManager:
         self.action_interface = action.ActionInterface("web-metadata\\actions.json")
     
     def new_game(self) -> None:
-        # self.current_game = Game(self.players, self.dealer, self.deck)
-        # return self.current_game.init_round()
+        self.player.hand.reset()
+        self.dealer.hand.reset()
         self.action_interface.execute("start")
         self.action_interface.execute("bet")
-        # self.deal()
     
     def deal(self) -> None:
         self.action_interface.execute("next")
@@ -32,17 +31,22 @@ class OnlineManager:
     def get_cards(self):
         player = action.detect_document('cropped_img_one.png')
         self.yield_cards(player)
-        print(player)
         dealer = action.detect_document('cropped_img_two.png')
         self.yield_cards(dealer)
-        print(dealer)
         for card in player:
-            self.player.hand.add_card(Card(card))
-            self.deck.remove_card(Card(card))
-            # check if player has blackjack
+            count = player.count(card) - self.player.hand.cards.count(card)
+            if count > 0:
+                self.player.hand.add_card(card)
+                self.deck.remove_card(card)
+        if self.player.hand.get_value() == 21:
+            return self.get_state(), True, True, False, {}
         for card in dealer:
-            self.dealer.hand.add_card(Card(card))
-            self.deck.remove_card(Card(card))
+            count = dealer.count(card) - self.dealer.hand.cards.count(card)
+            if count > 0:
+                self.dealer.hand.add_card(card)
+                self.deck.remove_card(card)
+                
+        print("Player hand:", [i for i in self.player.hand.cards], "Dealer's hand:", [i for i in self.dealer.hand.cards])
 
     
     def play_game(self, action: int) -> None:
@@ -83,7 +87,7 @@ class OnlineManager:
         
         # redundant = -10 if (not curr_hand.split_possible and action == 3) or (not curr_hand.insurance_possible and action == 2) else 0
         
-        return self.get_state(curr_hand), False, False, False, {}
+        return self.get_state(), False, False, False, {}
     
     def hit(self) -> None:
         self.action_interface.execute("hit")

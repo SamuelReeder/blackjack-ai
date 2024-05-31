@@ -8,7 +8,7 @@
         "id": "none",
         "classes": "none",
         "position": {
-          "x": 650,
+          "x": 500,
           "y": 700
         }
       },
@@ -19,7 +19,7 @@
         "id": "none",
         "classes": "none",
         "position": {
-          "x": 650,
+          "x": 500,
           "y": 700
         }
       }
@@ -35,7 +35,7 @@
         "id": "none",
         "classes": "none",
         "position": {
-          "x": 369,
+          "x": 219,
           "y": 528
         }
       }
@@ -51,7 +51,7 @@
         "id": "none",
         "classes": "none",
         "position": {
-          "x": 667,
+          "x": 517,
           "y": 666
         }
       }
@@ -67,8 +67,8 @@
         "id": "none",
         "classes": "none",
         "position": {
-          "x": 671,
-          "y": 668
+          "x": 517,
+          "y": 666
         }
       }
     ],
@@ -80,10 +80,10 @@
         "action": "click",
         "tag": "DIV",
         "type": "N/A",
-        "id": "rail-column",
-        "classes": "col-1-4 ucsRailContainer ",
+        "id": "none",
+        "classes": "none",
         "position": {
-          "x": 1208,
+          "x": 1050,
           "y": 666
         }
       }
@@ -99,7 +99,7 @@
         "id": "none",
         "classes": "none",
         "position": {
-          "x": 1000,
+          "x": 850,
           "y": 666
         }
       }
