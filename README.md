@@ -12,7 +12,7 @@ To run this project, you will need:
 ## Installation
 Clone the repository and install the required packages:
 ```bash
-git clone https://your-repository-url
+git clone https://github.com/SamuelReeder/blackjack-ai.git
 cd blackjack-ai
 pip install -r requirements.txt
 ```
@@ -27,6 +27,14 @@ py run.py <model_num>
 To evaluate the performance of a trained model, use the same model number with the evaluation script:
 ```
 py eval.py <model_num>
+```
+
+## Run one a gambling site
+Use the browser extension here at this [repo](https://github.com/SamuelReeder/web-action-encoder) to make a JSON file encoding various actions for the specific site and then pass it in the game_manager.py file. Use the reference for [247blackjack.com] in the web-metadata folder. 
+
+Then run:
+```
+py src/oneline_play.py <model_num>
 ```
 
 ## Results
