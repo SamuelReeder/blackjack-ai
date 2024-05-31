@@ -61,7 +61,7 @@ class Deck:
                 self.card_dict[card] = 1
                 self.card_arr[card - 1] = 1
                 
-    def remove_card(self, card: Card) -> None:
+    def remove_card(self, card: int) -> None:
         print("Removing card:", card)
         self.card_dict[card] -= 1
         self.card_arr[card - 1] -= 1

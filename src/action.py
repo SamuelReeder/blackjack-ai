@@ -56,22 +56,22 @@ class ActionInterface:
         for action in self.data[name]['steps']:
             if action['action'] == 'click':
                 element = None
-                if action['id'] != 'none':
-                    element = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.ID, action['id'])))
+                # if action['id'] != 'none':
+                #     element = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.ID, action['id'])))
                 # elif action['classes'] != 'none':
                 #     print('Classes:', action['classes'])
                 #     element = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, action['classes'])))
                 # elif action['tag']:
                 #     print('Tag:', action['tag'])
                 #     element = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.TAG_NAME, action['tag'])))
-                else:
-                    x = action['position']['x']
-                    y = action['position']['y']
-                    action = ActionBuilder(self.driver)
-                    action.pointer_action.move_to_location(x, y)
-                    action.pointer_action.click()
-                    action.perform()
-                    self.last_clicked_element = self.driver.switch_to.active_element
+                # else:
+                x = action['position']['x']
+                y = action['position']['y']
+                action = ActionBuilder(self.driver)
+                action.pointer_action.move_to_location(x, y)
+                action.pointer_action.click()
+                action.perform()
+                self.last_clicked_element = self.driver.switch_to.active_element
 
                 if element:
                     element.click()
@@ -98,14 +98,17 @@ class ActionInterface:
         
         processed_img = Image.open('element.png')
 
-        area_one = (500, 450, 1000, 660)  
-        area_two = (1230, 450, 1700, 550) 
+        area_one = (480, 450, 1010, 660)  
+        area_two = (1230, 420, 1550, 555) 
 
         cropped_img_one = processed_img.crop(area_one)
         cropped_img_two = processed_img.crop(area_two)
 
+        rotated_img_one = cropped_img_two.rotate(-10)
+        rotated_img_two = cropped_img_two.rotate(12)
+        
         cropped_img_one.save('cropped_img_one.png')
-        cropped_img_two.save('cropped_img_two.png')
+        rotated_img_two.save('cropped_img_two.png')
 
 
 def detect_document(path):

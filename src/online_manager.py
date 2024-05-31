@@ -22,6 +22,8 @@ class OnlineManager:
         self.action_interface.execute("bet")
     
     def deal(self) -> None:
+        self.player.hand.reset()
+        self.dealer.hand.reset()
         self.action_interface.execute("next")
         self.action_interface.execute("deal")
         sleep(2)
@@ -39,6 +41,7 @@ class OnlineManager:
                 self.player.hand.add_card(card)
                 self.deck.remove_card(card)
         if self.player.hand.get_value() == 21:
+            sleep(1)
             return self.get_state(), True, True, False, {}
         for card in dealer:
             count = dealer.count(card) - self.dealer.hand.cards.count(card)
@@ -62,16 +65,18 @@ class OnlineManager:
         match action:
             case 0:
                 self.stay()
-                sleep(2)
+                sleep(3)
                 return self.get_state(), False, True, False, {}
             case 1:
                 self.hit()
-                sleep(2)
                 value = self.player.hand.get_value()
                 dealer_value = self.dealer.hand.get_value()
+                print("Player hand value:", value, "Dealer's hand value:", dealer_value)
                 if value > 21:
+                    sleep(1)
                     return self.get_state(), False, True, False, {}
                 elif value == 21:
+                    sleep(1)
                     return self.get_state(), True, True, False, {}
                 elif dealer_value == 21:
                     return self.get_state(), False, True, False, {}
@@ -91,7 +96,6 @@ class OnlineManager:
     
     def hit(self) -> None:
         self.action_interface.execute("hit")
-        sleep(1)
         self.action_interface.scan_cards()
         self.get_cards()
             

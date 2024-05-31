@@ -25,7 +25,7 @@ class OnlineBlackjackEnv(gym.Env):
         # Assuming a simple state representation as an example
         state_size = 15  # Replace with the actual size of the state
         self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(state_size,), dtype=np.float32)
-        # self.game.new_game()
+        self.game.new_game()
 
 
     def step(self, action):
@@ -49,7 +49,7 @@ class OnlineBlackjackEnv(gym.Env):
 
     def reset(self):
         print("Starting new game:")
-        self.game.new_game()
+        # self.game.new_game()
         self.game.deal()
         new_state = self.game.get_state()
         # Explicitly create a numpy array from the integers, then concatenate the last list
