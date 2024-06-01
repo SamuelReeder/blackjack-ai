@@ -42,23 +42,18 @@ class Hand:
     def display(self, hide: bool = True) -> None:
         if self.dealer:
             if hide:
-                print("hidden")
-                print(self.cards[1].rank)
-                if self.cards[1].rank == 1:
+                print("Dealer's hand:", self.cards[1])
+                if self.cards[1] == 1:
                     self.insurance_possible = True
-                return 
-            if len(self.cards) == 2:
-                if self.cards[0].rank == self.cards[1].rank:
-                    self.split_possible = True
-            for card in self.cards:
-                print(card, end=" ")
-            # print("Value:", self.get_value())
-            
+            else:
+                print("Dealer's hand:", self.cards)
                 
+            if len(self.cards) == 2:
+                if self.cards[0] == self.cards[1]:
+                    self.split_possible = True
+            
         else:
-            for card in self.cards:
-                print(card, end=" ")
-            # print("Value:", self.get_value())
+            print("Your hand:", self.cards)
     
     def split() -> tuple:
         temp = self.cards.pop()

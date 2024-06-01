@@ -40,10 +40,9 @@ class Deck:
         if len(self.cards) < 1:
             self.reset()
             
-        if self.cards[-1].rank == 10 or self.cards[-1].rank == 1:
+        if self.cards[-1] == 10 or self.cards[-1] == 1:
             self.face_tally += 1
-
-        
+    
         card = self.cards.pop()
         
         if card != -1:

@@ -33,9 +33,9 @@ class BlackjackEnv(gym.Env):
         super(BlackjackEnv, self).__init__()
 
         self.game = blackjack.Manager()
-        print("Your balance is:", self.game.players[0].balance)
+        print("Your balance is:", self.game.player.balance)
         self.balances = []
-        self.balances.append(self.game.players[0].balance)
+        self.balances.append(self.game.player.balance)
 
         # Define the action and observation space
         # Assuming there are 'n' discrete actions like hit, stand, etc.
@@ -58,8 +58,6 @@ class BlackjackEnv(gym.Env):
         print(action)
         new_state, reward, done, truncated, info = self.game.play_game(action)
         print(new_state)
-        # print(new_state)
-        # balances.append(info['balance'])
         integers = np.array(new_state[:-1], dtype=np.float32)  # Convert the integer elements
         last_list = np.array(new_state[-1], dtype=np.float32)  # Convert the last element which is a list
         flattened_state = np.concatenate((integers, last_list))  # Concatenate both arrays
@@ -72,8 +70,7 @@ class BlackjackEnv(gym.Env):
         print("NEW GAME")
         new_state, info = self.game.new_game()
         print("State:", new_state)
-        # print("Your balance is:", self.game.players[0].balance)
-        self.balances.append(self.game.players[0].balance)
+        self.balances.append(self.game.player.balance)
         # Explicitly create a numpy array from the integers, then concatenate the last list
         integers = np.array(new_state[:-1], dtype=np.float32)  # Convert the integer elements
         last_list = np.array(new_state[-1], dtype=np.float32)  # Convert the last element which is a list

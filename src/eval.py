@@ -119,7 +119,7 @@ def test(num_test_episodes, policy_net, env, device):
     for i_episode in range(num_test_episodes):
         # Initialize the environment and state
         state, info = env.reset()
-        state = torch.tensor([state], device=device, dtype=torch.float32)
+        state = torch.tensor(state, device=device, dtype=torch.float32)
         episode_reward = 0  # Accumulates rewards for this episode
 
         while True:
@@ -129,7 +129,7 @@ def test(num_test_episodes, policy_net, env, device):
             
             # Perform action in env
             next_state, reward, terminated, truncated, _ = env.step(action.item())
-            balances.append(env.game.players[0].balance)
+            balances.append(env.game.player.balance)
             
             episode_reward += reward
 
@@ -138,7 +138,7 @@ def test(num_test_episodes, policy_net, env, device):
                 break  # Exit loop if the episode ended
 
             # Move to the next state
-            next_state = torch.tensor([next_state], device=device, dtype=torch.float32)
+            next_state = torch.tensor(next_state, device=device, dtype=torch.float32)
             state = next_state
 
         total_rewards.append(episode_reward)  # Store the total reward for this episode
