@@ -10,6 +10,12 @@ class Player:
     def change_balance(self, amount: int) -> None:
         print(f"Changing balance by {amount}")
         self.balance += amount
+        
+    def reset(self) -> None:
+        self.hand = Hand()
+        self.insurance = False
+        self.split = False
+        self.hand.bet = 0
 
 class Dealer(Player):
     def __init__(self):

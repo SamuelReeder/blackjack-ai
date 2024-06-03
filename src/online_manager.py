@@ -11,7 +11,6 @@ class OnlineManager:
         self.player = Player()
         self.dealer = Dealer()
         self.balance: List[float] = []
-        self.game_over = False
         self.game_on = False
         self.action_interface = action.ActionInterface("web-metadata\\actions.json")
     
@@ -40,7 +39,7 @@ class OnlineManager:
             if count > 0:
                 self.player.hand.add_card(card)
                 self.deck.remove_card(card)
-        if self.player.hand.get_value() == 21:
+        if self.player.hand.calculate_value() == 21:
             sleep(1)
             return self.get_state(), True, True, False, {}
         for card in dealer:
@@ -61,8 +60,8 @@ class OnlineManager:
                 return self.get_state(), False, True, False, {}
             case 1:
                 self.hit()
-                value = self.player.hand.get_value()
-                dealer_value = self.dealer.hand.get_value()
+                value = self.player.hand.calculate_value()
+                dealer_value = self.dealer.hand.calculate_value()
                 print("Player hand value:", value, "Dealer's hand value:", dealer_value)
                 if value > 21:
                     sleep(1)
@@ -98,8 +97,8 @@ class OnlineManager:
         # then do next game
         
     def get_state(self) -> tuple:
-        # print("Hand value:", hand.get_value(), "Dealer's hand value:", self.dealer.hand.get_value(), "Current count:", self.deck.current_count, "Face tally:", self.deck.face_tally, "Deck length:", len(self.deck.cards), "Insurance possible:", self.dealer.hand.insurance_possible, "Split possible:", hand.split_possible)
-        return [self.player.hand.get_value(), self.dealer.hand.get_value(one_card=True), self.deck.current_count, self.deck.face_tally, len(self.deck.cards), self.deck.card_arr] # , self.dealer.hand.insurance_possible, hand.split_possible
+        # print("Hand value:", hand.calculate_value(), "Dealer's hand value:", self.dealer.hand.calculate_value(), "Current count:", self.deck.current_count, "Face tally:", self.deck.face_tally, "Deck length:", len(self.deck.cards), "Insurance possible:", self.dealer.hand.insurance_possible, "Split possible:", hand.split_possible)
+        return [self.player.hand.calculate_value(), self.dealer.hand.calculate_value(hide_dealer==True), self.deck.current_count, self.deck.face_tally, len(self.deck.cards), self.deck.card_arr] # , self.dealer.hand.insurance_possible, hand.split_possible
         
             
     

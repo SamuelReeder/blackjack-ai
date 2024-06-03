@@ -17,6 +17,8 @@ class Game:
         hand.display()
         if self.player_is_over(hand):
             hand.complete = True
+        elif hand.calculate_value() == 21:
+            hand.complete = True        
             
     def stay(self, hand: Hand) -> None:
         hand.complete = True
@@ -60,9 +62,9 @@ class Game:
             self.player.hand.add_card(card0)
             self.dealer.hand.add_card(card1)
         self.player.hand.display()
-        self.dealer.hand.display()
+        self.dealer.hand.display(hide=True)
         
-        player_has_blackjack, dealer_has_blackjack = self.check_for_blackjack(0)
+        player_has_blackjack, dealer_has_blackjack = self.check_for_blackjack()
         if player_has_blackjack:
             self.show_blackjack_results(player_has_blackjack, dealer_has_blackjack, self.player.hand)
             return (self.get_state(self.player.hand), True)
@@ -70,41 +72,34 @@ class Game:
         return (self.get_state(self.player.hand), False)
         
     def dealer_play(self) -> tuple:
-        while self.dealer.hand.get_value() < 17:
+        while self.dealer.hand.calculate_value() < 17:
             self.dealer.hand.add_card(self.deck.deal())
-            self.dealer.hand.display(hide=False)
+            self.dealer.hand.display(hide=True)
 
     def end(self) -> tuple:
         self.check_insurance()
-        dealer_hand_value = self.dealer.hand.get_value()
-        for i, element in enumerate(self.player.hand):
-            player_hand_value = element.get_value()
-           
-            player_blackjack, dealer_blackjack = self.check_for_blackjack(i)
-            if player_blackjack and dealer_blackjack:
-                self.show_blackjack_results(
-                    player_blackjack, dealer_blackjack, element
-                )
-                self.player.change_balance(element.bet)
-                continue
+        
+        dealer_hand_value = self.dealer.hand.calculate_value()
+        player_hand_value = self.player.hand.calculate_value()
+        
+        player_blackjack, dealer_blackjack = self.check_for_blackjack()
+        if player_blackjack and dealer_blackjack:
+            self.show_blackjack_results(
+                player_blackjack, dealer_blackjack, self.player.hand
+            )
+            self.player.change_balance(self.player.hand.bet)
                 
         return (self.get_state(self.player.hand), self.player.balance - self.initial_balance , True, False, {})
 
     def player_is_over(self, hand: Hand) -> bool:
-        return hand.get_value() > 21
+        return hand.calculate_value() > 21
 
-    def check_for_blackjack(self, index: int) -> tuple:
-        player = False
-        dealer = False
-        if self.player.hand.get_value() == 21:
-            player = True
-        if self.dealer.hand.get_value() == 21:
-            dealer = True
-        return player, dealer
+    def check_for_blackjack(self) -> tuple:
+        return self.player.hand.calculate_value() == 21, self.dealer.hand.calculate_value() == 21
     
     def check_insurance(self) -> None:
         if self.player.insurance:
-            if self.dealer.hand.get_value() == 21:
+            if self.dealer.hand.calculate_value() == 21:
                 if self.debug:
                     print("Dealer has blackjack! You get your insurance!")
                 self.player.change_balance(self.player.hand.bet)
@@ -131,5 +126,5 @@ class Game:
             self.queue_shuffle = False
     
     def get_state(self, hand: Hand, hide_dealer:bool = True) -> tuple:
-        print("Hand value:", hand.get_value(), "Dealer's hand value:", self.dealer.hand.get_value(one_card=hide_dealer), "Current count:", self.deck.current_count, "Face tally:", self.deck.face_tally, "Deck length:", len(self.deck.cards), "Insurance possible:", self.dealer.hand.insurance_possible, "Split possible:", hand.split_possible)
-        return [hand.get_value(), self.dealer.hand.get_value(one_card=True), self.deck.current_count, self.deck.face_tally, len(self.deck.cards), self.deck.card_arr] # , self.dealer.hand.insurance_possible, hand.split_possible
+        print("Hand value:", hand.calculate_value(), "Dealer's hand value:", self.dealer.hand.calculate_value(hide_dealer==hide_dealer), "Current count:", self.deck.current_count, "Face tally:", self.deck.face_tally, "Deck length:", len(self.deck.cards), "Insurance possible:", self.dealer.hand.insurance_possible, "Split possible:", hand.split_possible)
+        return [hand.calculate_value(), self.dealer.hand.calculate_value(hide_dealer=hide_dealer), self.deck.current_count, self.deck.face_tally, len(self.deck.cards), self.deck.card_arr] # , self.dealer.hand.insurance_possible, hand.split_possible

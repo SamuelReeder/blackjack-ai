@@ -11,9 +11,10 @@ class Manager:
         self.player: Player = Player()
         self.dealer = Dealer()
         self.balance: List[float] = []
-        self.game_over = False
-    
+            
     def new_game(self) -> None:
+        self.player.reset()
+        self.dealer.reset()
         self.current_game = Game(self.player, self.dealer, self.deck, debug=True)
         return self.current_game.init_round()
     
