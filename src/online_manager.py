@@ -12,7 +12,7 @@ class OnlineManager:
         self.dealer = Dealer()
         self.balance: List[float] = []
         self.game_on = False
-        self.action_interface = action.ActionInterface("web-metadata\\actions.json")
+        self.action_interface = action.ActionInterface("..\\web-metadata\\actions.json")
     
     def new_game(self) -> None:
         self.player.hand.reset()
