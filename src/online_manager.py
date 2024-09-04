@@ -6,9 +6,9 @@ from time import sleep
 
 class OnlineManager:
     
-    def __init__(self) -> None:
+    def __init__(self, balance: int = 1000) -> None:
         self.deck = Deck()
-        self.player = Player()
+        self.player = Player(balance)
         self.dealer = Dealer()
         self.balance: List[float] = []
         self.game_on = False

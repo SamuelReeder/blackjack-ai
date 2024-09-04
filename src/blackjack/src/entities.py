@@ -2,7 +2,7 @@ from .hand import Hand
 from typing import Optional
 
 class Player:
-    def __init__(self, balance: int = 1000000000):
+    def __init__(self, balance: int):
         self.hands = [Hand()]
         self.balance = balance
         self.insurance = False
@@ -25,7 +25,7 @@ class Player:
 
 class Dealer(Player):
     def __init__(self):
-        super().__init__()
+        super().__init__(balance=0)
         self.hand = Hand(dealer=True)
 
     def reset(self) -> None:

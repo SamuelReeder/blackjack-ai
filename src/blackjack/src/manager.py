@@ -5,9 +5,9 @@ from .hand import Hand
 from typing import List, Tuple, Dict, Any, Optional
 
 class Manager:
-    def __init__(self) -> None:
+    def __init__(self, balance: int = 1000) -> None:
         self.deck = Deck()
-        self.player: Player = Player()
+        self.player: Player = Player(balance)
         self.dealer = Dealer()
         self.current_game: Game = None
 
@@ -16,7 +16,6 @@ class Manager:
         self.dealer.reset()
         self.current_game = Game(self.player, self.dealer, self.deck, bet)
         return self.current_game.init_round()
-
     
     def play_game(self, action: int) -> Tuple[List[Any], int, bool, bool, Dict[str, Any]]:
         if not self.current_game:

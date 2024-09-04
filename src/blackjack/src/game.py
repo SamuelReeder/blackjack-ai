@@ -91,7 +91,7 @@ class Game:
 
     def end(self) -> Tuple[List[Any], int, bool, bool, Dict[str, Any]]:
         self.check_insurance()
-        self.dealer_play()
+        # self.dealer_play()
         
         results = {}
         total_win_loss = 0
