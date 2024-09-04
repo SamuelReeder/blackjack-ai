@@ -99,7 +99,7 @@ class Game:
         for i, hand in enumerate(self.player.hands):
             result = self.determine_result(hand)
             payout = self.calculate_payout(hand, result)
-            total_win_loss += payout
+            total_win_loss += payout - hand.bet
             self.player.change_balance(payout)
             results[f"hand_{i+1}"] = {"result": result.name, "payout": payout}
         
@@ -140,10 +140,10 @@ class Game:
             self.dealer.hand.calculate_value(hide_dealer=True),
             self.deck.current_count,
             self.deck.face_tally,
-            len(self.deck.cards),
-            self.deck.card_arr,
-            self.dealer.hand.insurance_possible,
-            hand.split_possible
+            # len(self.deck.cards),
+            # self.deck.card_arr,
+            # self.dealer.hand.insurance_possible,
+            # hand.split_possible
         ]
 
     def deal_card(self) -> Optional[int]:

@@ -8,7 +8,7 @@ build:
 	docker build -t $(IMAGE_NAME) $(DOCKERFILE_PATH)
 
 run:
-	docker run -it --rm --gpus all -v $(shell pwd):$(WORKDIR) $(IMAGE_NAME) /bin/bash
+	docker run -it --gpus all -v $(shell pwd):$(WORKDIR) $(IMAGE_NAME) /bin/bash
 
 stop:
 	docker stop $(CONTAINER_NAME)

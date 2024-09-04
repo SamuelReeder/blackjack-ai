@@ -2,9 +2,6 @@ import time
 import random
 from blackjack import Manager
 
-def ai_action(valid_actions):
-    return random.choice(valid_actions)
-
 def human_action(valid_actions):
     while True:
         action = input(f"Choose action {valid_actions}: ")
@@ -43,7 +40,7 @@ def human_action(valid_actions):
         except ValueError:
             print("Please enter a valid number.")
 
-def play_game(instance, use_ai=False):
+def play_game(instance):
     
     bet = place_bet()
     state, game_over = instance.new_game(bet)
@@ -69,11 +66,7 @@ def play_game(instance, use_ai=False):
         print("\n--- Player's Turn ---")
         valid_actions = instance.get_valid_actions()
 
-        if use_ai:
-            action = ai_action(valid_actions)
-            print(f"AI chose: {action}")
-        else:
-            action = human_action(valid_actions)
+        action = human_action(valid_actions)
 
         state, reward, done, truncated, info = instance.play_game(action)
 
@@ -115,18 +108,7 @@ def main():
     print(f"Starting Balance: {instance.player.balance}")
 
     while True:
-        mode = input("Choose mode (1 for Human, 2 for AI): ")
-        if mode == '1':
-            use_ai = False
-            break
-        elif mode == '2':
-            use_ai = True
-            break
-        else:
-            print("Invalid choice. Please enter 1 for Human or 2 for AI.")
-
-    while True:
-        play_game(instance, use_ai)
+        play_game(instance)
 
 if __name__ == "__main__":
     main()

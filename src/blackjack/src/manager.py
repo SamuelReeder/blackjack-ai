@@ -16,6 +16,7 @@ class Manager:
         self.dealer.reset()
         self.current_game = Game(self.player, self.dealer, self.deck, bet)
         return self.current_game.init_round()
+
     
     def play_game(self, action: int) -> Tuple[List[Any], int, bool, bool, Dict[str, Any]]:
         if not self.current_game:
