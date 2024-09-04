@@ -1,22 +1,33 @@
 from .hand import Hand
+from typing import Optional
 
 class Player:
     def __init__(self, balance: int = 1000000000):
-        self.hand = Hand()
+        self.hands = [Hand()]
         self.balance = balance
         self.insurance = False
-        self.split = False
-        
+       
     def change_balance(self, amount: int) -> None:
-        print(f"Changing balance by {amount}")
         self.balance += amount
-        
+       
     def reset(self) -> None:
-        self.hand = Hand()
+        self.hands = [Hand()]
         self.insurance = False
-        self.split = False
-        self.hand.bet = 0
+
+    def add_hand(self, hand: Hand) -> None:
+        self.hands.append(hand)
+
+    def get_active_hand(self) -> Optional[Hand]:
+        for hand in self.hands:
+            if not hand.complete:
+                return hand
+        return None
 
 class Dealer(Player):
     def __init__(self):
         super().__init__()
+        self.hand = Hand(dealer=True)
+
+    def reset(self) -> None:
+        self.hand = Hand(dealer=True)
+        self.insurance = False

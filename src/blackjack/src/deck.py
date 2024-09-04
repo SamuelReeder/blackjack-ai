@@ -3,7 +3,6 @@ import random
 
 
 class Deck:
-        
     def __init__(self) -> None:
         self.reset()
                 
@@ -25,7 +24,7 @@ class Deck:
         self.cards.insert(random.randrange(len(self.cards) // 2 + 1, len(self.cards)), -1)
         
         
-    def update_count(self, card: Card) -> None:
+    def update_count(self, card: int) -> None:
         if card in [2, 3, 4, 5, 6]:
             self.current_count += 1
             cards_left = self.number_of_decks - ((self.original_length - len(self.cards))) 
@@ -35,8 +34,7 @@ class Deck:
             self.current_count -= 1
             self.true_count -= 1
 
-
-    def deal(self) -> Card:
+    def deal(self) -> int:
         if len(self.cards) < 1:
             self.reset()
             
@@ -61,7 +59,6 @@ class Deck:
                 self.card_arr[card - 1] = 1
                 
     def remove_card(self, card: int) -> None:
-        print("Removing card:", card)
         self.card_dict[card] -= 1
         self.card_arr[card - 1] -= 1
         self.update_count(card)
