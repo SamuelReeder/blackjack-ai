@@ -23,7 +23,6 @@ class Deck:
         self.init_card_dict()
         self.cards.insert(random.randrange(len(self.cards) // 2 + 1, len(self.cards)), -1)
         
-        
     def update_count(self, card: int) -> None:
         if card in [2, 3, 4, 5, 6]:
             self.current_count += 1
@@ -47,6 +46,9 @@ class Deck:
             self.card_dict[card] -= 1
             self.card_arr[card - 1] -= 1
             self.update_count(card)
+        # else:
+        #     self.reset()
+        #     return self.deal()
         return card
     
     def init_card_dict(self) -> None:

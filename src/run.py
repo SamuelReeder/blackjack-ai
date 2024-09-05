@@ -53,8 +53,7 @@ num_episodes = 100000
 
 env = BlackjackEnv()
 n_actions = env.action_space.n
-state, info = env.reset()
-n_observations = len(state)
+n_observations = env.state_size
 
 policy_net = DQN(n_observations, n_actions).to(device)
 target_net = DQN(n_observations, n_actions).to(device)
@@ -133,6 +132,12 @@ def run(random_play=False):
         state, info = env.reset()
         state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(0)
 
+        if 'game_over' in info and info['game_over']:
+            # Handle immediate termination
+            reward = torch.tensor([info['reward']], device=device)
+            total_reward += reward.item()
+            print(f"Episode {i_episode}/{num_episodes} - Immediate Termination - Reward: {reward.item()}")
+            continue 
         
         for t in count():
             action = select_action(state) if not random_play else torch.tensor([[env.action_space.sample()]], device=device, dtype=torch.long)

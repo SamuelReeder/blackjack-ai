@@ -92,22 +92,25 @@ class BlackjackEnv(gym.Env):
         self.manager = Manager(balance)
         self.balance = balance
         self.balances = [balance]
+        self.bet = 10
         self.action_space = spaces.Discrete(2)
         
-        state_size = 4
-        self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(state_size,), dtype=np.float32)
+        self.state_size = 4
+        self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(self.state_size,), dtype=np.float32)
         
         self.state = None
         self.done = False
 
     def reset(self):
         """Resets the game state for a new round."""
-        bet = 10  # Starting bet (could be made dynamic based on action)
-        self.state, game_over = self.manager.new_game(bet)
+        # self.bet = 10  # (could be made dynamic based on action)
+        self.state, game_over, temp = self.manager.new_game(self.bet)
         self.done = game_over
 
         self.balances.append(self.manager.player.balance)
         
+        if self.done:
+            return self.state, {'reward': temp['reward'], 'game_over': True}
         return self.state, {}
 
     # def _get_obs(self):

@@ -12,9 +12,8 @@ class GameResult(Enum):
     DEALER_BLACKJACK = 5
 
 class Game:
-    DEFAULT_BET = 100
 
-    def __init__(self, player: Player, dealer: Dealer, deck: Deck, bet: int = DEFAULT_BET) -> None:
+    def __init__(self, player: Player, dealer: Dealer, deck: Deck, bet: int) -> None:
         self.player = player
         self.dealer = dealer
         self.deck = deck
@@ -40,11 +39,20 @@ class Game:
 
         player_has_blackjack, dealer_has_blackjack = self.check_for_blackjack()
         if player_has_blackjack:
-            self.show_blackjack_results(player_has_blackjack, dealer_has_blackjack, self.player.hands[0])
-            return self.get_state(self.player.hands[0]), True
+            reward = self.show_blackjack_results(player_has_blackjack, dealer_has_blackjack, self.player.hands[0])
+            self.player.change_balance(reward)
+            return self.get_state(self.player.hands[0]), True, {"reward": reward - self.bet}
         
-        return self.get_state(self.player.hands[0]), False
-        
+        return self.get_state(self.player.hands[0]), False, {}    
+    
+    def check_for_blackjack(self) -> Tuple[bool, bool]:
+        return self.player.hands[0].calculate_value() == 21, self.dealer.hand.calculate_value() == 21
+    
+    def show_blackjack_results(self, player_has_blackjack: bool, dealer_has_blackjack: bool, hand: Hand) -> float:
+        if player_has_blackjack and dealer_has_blackjack:
+            return hand.bet
+        return hand.bet * 2.5
+    
     def hit(self, hand: Hand) -> None:
         card = self.deal_card()
         if card is None:
@@ -112,22 +120,11 @@ class Game:
     def is_bust(self, hand: Hand) -> bool:
         return hand.calculate_value() > 21
 
-    def check_for_blackjack(self) -> Tuple[bool, bool]:
-        return self.player.hands[0].calculate_value() == 21, self.dealer.hand.calculate_value() == 21
-    
     def check_insurance(self) -> None:
         if self.player.insurance:
             if self.dealer.hand.calculate_value() == 21:
                 self.player.change_balance(self.player.hands[0].bet)
             self.player.insurance = False
-
-    def show_blackjack_results(self, player_has_blackjack: bool, dealer_has_blackjack: bool, hand: Hand) -> None:
-        if player_has_blackjack and dealer_has_blackjack:
-            self.player.change_balance(hand.bet)
-        elif player_has_blackjack:
-            self.player.change_balance(hand.bet * 2.5)
-        elif dealer_has_blackjack and self.player.insurance:
-            self.player.change_balance(hand.bet)
 
     def check_shuffle(self) -> None:
         if self.queue_shuffle:  
