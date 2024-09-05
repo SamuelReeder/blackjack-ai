@@ -8,11 +8,21 @@ This project features a Blackjack-playing AI developed using a Deep Q-Network (D
 
 To run this project, you will need:
 
-- Python 3.8 or later
-- PyTorch
-- Other dependencies listed in `requirements.txt`
+- Python 3.x (tested on 3.12) or Docker
 
-## Installation
+## Get started
+
+### Using Docker (recommended)
+
+To use Docker, simply install the repository, build the image, and run the container:
+
+```bash
+git clone https://github.com/SamuelReeder/blackjack-ai.git
+cd blackjack-ai
+make all
+```
+
+### Manually using pip
 
 Clone the repository and install the required packages:
 
@@ -27,7 +37,7 @@ pip install -r requirements.txt
 To train a new model, use the following command, replacing <model_num> with the desired model number:
 
 ```bash
-py run.py <model_num>
+python src/run.py <model_num>
 ```
 
 ## Evaluating the Model
@@ -35,10 +45,12 @@ py run.py <model_num>
 To evaluate the performance of a trained model, use the same model number with the evaluation script:
 
 ```bash
-py eval.py <model_num>
+python src/eval.py <model_num>
 ```
 
-## Run on a gambling site
+Use `python src/eval.py 15` for my best pretrained model!
+
+## Run on a gambling site (coming soon)
 
 Use the browser extension here at this [repo](https://github.com/SamuelReeder/web-action-encoder) to make a JSON file encoding actions for the specific site and then pass it in the game_manager.py file. Use the reference for [247blackjack.com](https://www.247blackjack.com/) in the web-metadata folder.
 

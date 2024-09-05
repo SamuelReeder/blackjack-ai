@@ -30,7 +30,7 @@ n_observations = env.state_size
 
 policy_net = DQN(n_observations, n_actions).to(device)
 
-policy_net.load_state_dict(torch.load(f'../models/model_{num}_policy_net.pth', map_location=device))
+policy_net.load_state_dict(torch.load(f'./models/model_{num}_policy_net.pth', map_location=device))
 policy_net.eval()
 
 def select_action(state):

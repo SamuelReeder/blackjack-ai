@@ -169,13 +169,13 @@ def run(random_play=False):
 
 run()
 
-torch.save(policy_net.state_dict(), f'../models/model_{num}_policy_net.pth')
-torch.save(target_net.state_dict(), f'../models/model_{num}_target_net.pth')
+torch.save(policy_net.state_dict(), f'./models/model_{num}_policy_net.pth')
+torch.save(target_net.state_dict(), f'./models/model_{num}_target_net.pth')
 torch.save({
     'episode': num_episodes,
     'model_state_dict': policy_net.state_dict(),
     'optimizer_state_dict': optimizer.state_dict(),
-}, f'../models/model_{num}_checkpoint.pth')
+}, f'./models/model_{num}_checkpoint.pth')
 print(f'Model saved as model_{num}.pth')
 
 plot_metrics(show_result=True)
