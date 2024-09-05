@@ -2,8 +2,6 @@ import gymnasium as gym
 from gymnasium import spaces
 import numpy as np
 from blackjack import Manager
-from network import DQN
-import math
 import random
 from collections import namedtuple, deque
 from itertools import count

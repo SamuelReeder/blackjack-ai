@@ -4,8 +4,9 @@ import gymnasium as gym
 from gymnasium import spaces
 import numpy as np
 import blackjack
-from network import DQN
+from model import DQN
 import math
+import sys
 import random
 from collections import namedtuple, deque
 from itertools import count
@@ -15,6 +16,12 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
+
+
+if len(sys.argv) < 2:
+    print("Please provide a number to save the model")
+    sys.exit(1)
+num = sys.argv[1]
 
 is_ipython = 'inline' in matplotlib.get_backend()
 if is_ipython:
@@ -35,13 +42,14 @@ Transition = namedtuple('Transition',
 
 # hyperparameters
 BATCH_SIZE = 128
-GAMMA = 0.99
+GAMMA = 0.9
 EPS_START = 0.9
-EPS_END = 0.05
-EPS_DECAY = 1000
+EPS_END = 0.1
+EPS_DECAY = 5000
 TAU = 0.005
-LR = 1e-4
+LR = 3e-4
 REPORT_INTERVAL = 50 
+num_episodes = 100000
 
 env = BlackjackEnv()
 n_actions = env.action_space.n
@@ -78,7 +86,7 @@ def plot_metrics(show_result=False):
     plt.xlabel('Episode')
     plt.ylabel('Balance')
     plt.plot(balances_t.numpy())
-    plt.pause(0.001)
+    # plt.pause(0.001)
     if is_ipython:
         if not show_result:
             display.display(plt.gcf())
@@ -131,7 +139,7 @@ def run(random_play=False):
             observation, reward, terminated, truncated, _ = env.step(action.item())
             reward = torch.tensor([reward], device=device)
             total_reward += reward.item()
-            rewards.append(total_reward)
+            rewards.append(reward.item())
             done = terminated or truncated
 
             next_state = None if terminated else torch.tensor(observation, dtype=torch.float32, device=device).unsqueeze(0)
@@ -150,24 +158,21 @@ def run(random_play=False):
             if done:
                 env.balances.append(total_reward)
                 if i_episode % REPORT_INTERVAL == 0:
-                    print(f"Episode {i_episode}/{num_episodes} - Total Reward: {total_reward} - Average Reward: {total_reward / REPORT_INTERVAL}")
+                    print(f"Episode {i_episode}/{num_episodes} - Total Reward: {total_reward} - Average Reward: {sum(rewards) / REPORT_INTERVAL}")
                     rewards = []
-                plot_metrics()
                 break
-
-num_episodes = 150000
 
 run()
 
-torch.save(policy_net.state_dict(), f'C:/Users/samue/Documents/blackjack-ai/models/model_{num}_policy_net.pth')
-torch.save(target_net.state_dict(), f'C:/Users/samue/Documents/blackjack-ai/models/model_{num}_target_net.pth')
+torch.save(policy_net.state_dict(), f'../models/model_{num}_policy_net.pth')
+torch.save(target_net.state_dict(), f'../models/model_{num}_target_net.pth')
 torch.save({
     'episode': num_episodes,
     'model_state_dict': policy_net.state_dict(),
     'optimizer_state_dict': optimizer.state_dict(),
-}, f'C:/Users/samue/Documents/blackjack-ai/models/model_{num}_checkpoint.pth')
+}, f'../models/model_{num}_checkpoint.pth')
+print(f'Model saved as model_{num}.pth')
 
-print('Training Complete')
 plot_metrics(show_result=True)
 plt.ioff()
 plt.show()
