@@ -4,6 +4,9 @@
 
 This project features a Blackjack-playing AI developed using a Deep Q-Network (DQN) built with PyTorch. My best model achieves a 47.6% win rate and 6.1% push rate evaluated over 1000 games.
 
+![Evaluation Metrics](img/eval.png)
+![Performance Graph](img/graph.png)
+
 ## Prerequisites
 
 To run this project, you will need:
@@ -47,5 +50,3 @@ To evaluate the performance of a trained model, use the same model number with t
 ```bash
 python src/eval.py <model_num>
 ```
-
-Use `python src/eval.py 21` for my best pretrained model!

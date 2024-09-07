@@ -5,6 +5,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
+import random
 from environment import BlackjackEnv
 from model import DQN
 
@@ -26,6 +27,17 @@ try:
 except IndexError:
     interactive = False
 
+def set_seed(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+
+
+seed = random.randint(0, 10000)
+set_seed(seed)
+print(f"Using seed: {seed}")
 
 num_episodes = 1000 
 cumulative_rewards = []
@@ -33,6 +45,8 @@ game_lengths = []
 win_count = 0
 loss_count = 0
 push_count = 0
+
+action_names = ['Stay', 'Hit', 'Split', 'Insure', 'Double Down']
 
 env = BlackjackEnv()
 starting_balance, starting_bet = env.balance, env.bet
@@ -75,8 +89,8 @@ for i_episode in range(num_episodes):
     
     if interactive:
         print(f"\n=== Game {i_episode + 1} ===")
-        print(f"Player Balance: ${env.manager.player.balance:.2f}")
-        print(f"Player Bet: ${env.manager.player.hands[0].bet:.2f}")
+        print(f"Model Balance: ${env.manager.player.balance:.2f}")
+        print(f"Model Bet: ${env.manager.player.hands[0].bet:.2f}")
         print(f"Dealer's Visible Card: {env.manager.dealer.hand.calculate_value(hide_dealer=True)}")
         print(f"Player's Hand: {env.manager.player.hands[0].cards} (Value: {env.manager.player.hands[0].calculate_value()})")
         print('State:', state)
@@ -91,14 +105,17 @@ for i_episode in range(num_episodes):
         while True:
             action = select_action(state)
             
+            action_num = action.item()
+            action_name = action_names[action_num]
+            
             observation, reward, terminated, truncated, _ = env.step(action.item())
             reward = torch.tensor([reward], device=device)
             total_reward += reward.item()
             
             if interactive:
-                print(f"\n--- Player's Turn ---")
-                print(f"Action: {action.item()}")
-                print(f"Player's Hand: {env.manager.player.hands[0].cards} (Value: {env.manager.player.hands[0].calculate_value()})")
+                print(f"\n--- Model's Turn ---")
+                print(f"Action: {action_num} ({action_name})")
+                print(f"Model's Hand: {env.manager.player.hands[0].cards} (Value: {env.manager.player.hands[0].calculate_value()})")
                 print(f"Dealer's Visible Card: {env.manager.dealer.hand.calculate_value(hide_dealer=True)}")
                 print('State:', observation)
             

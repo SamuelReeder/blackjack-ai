@@ -48,7 +48,7 @@ EPS_END = 0.05
 EPS_DECAY = 10000
 TAU = 0.005
 LR = 3e-4
-REPORT_INTERVAL = 500
+REPORT_INTERVAL = 100
 num_episodes = 10000
 
 env = BlackjackEnv()
@@ -170,7 +170,7 @@ def run(random_play=False):
         # env.balances.append(total_reward)
         if i_episode % REPORT_INTERVAL == 0:
             sum_rewards = sum(rewards)
-            print(f"Episode {i_episode}/{num_episodes} - Total Reward: {total_reward} - Average Reward: {sum_rewards / REPORT_INTERVAL}")
+            print(f"Episode {i_episode + 190000}/{num_episodes + 190000} - Total Reward: {total_reward} - Average Reward: {sum_rewards / REPORT_INTERVAL}")
             thousand_episode_rewards += sum_rewards
             rewards = []
             if i_episode % 1000 == 0:

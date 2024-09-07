@@ -12,7 +12,6 @@ class DQN(nn.Module):
         self.fc3 = nn.Linear(32, 32)
         self.fc4 = nn.Linear(32, n_actions)
         
-        # Initialize weights
         self.apply(self._init_weights)
     
     def _init_weights(self, module):
