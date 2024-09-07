@@ -89,20 +89,20 @@ class Game:
 
 
     def dealer_play(self) -> None:
-        print(f"Dealer reveals their hidden card: {self.dealer.hand.cards[1]}")
-
-        while self.dealer.hand.calculate_value() < 17:
+        while self.dealer.hand.calculate_value() <= 17:
             card = self.deal_card()
-            if card is None:
-                raise ValueError("No more cards in the deck")
+            while card is None:
+                self.deck.reset()
+                card = self.deal_card()
             self.dealer.hand.add_card(card)
 
     def end(self) -> Tuple[List[Any], int, bool, bool, Dict[str, Any]]:
-        self.check_insurance()
+        # self.check_insurance()
         # self.dealer_play()
         
         results = {}
         total_win_loss = 0
+        self.dealer_play()
         
         for i, hand in enumerate(self.player.hands):
             result = self.determine_result(hand)
@@ -132,13 +132,14 @@ class Game:
             self.queue_shuffle = False
     
     def get_state(self, hand: Hand) -> List[Any]:
+        self.dealer.hand.calculate_value(),
         return [
             hand.calculate_value(),
             self.dealer.hand.calculate_value(hide_dealer=True),
             self.deck.current_count,
             self.deck.face_tally,
-            # len(self.deck.cards),
-            # self.deck.card_arr,
+            len(self.deck.cards),
+            *self.deck.card_arr,
             # self.dealer.hand.insurance_possible,
             # hand.split_possible
         ]

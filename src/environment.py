@@ -95,7 +95,7 @@ class BlackjackEnv(gym.Env):
         self.bet = 10
         self.action_space = spaces.Discrete(2)
         
-        self.state_size = 4
+        self.state_size = 15
         self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(self.state_size,), dtype=np.float32)
         
         self.state = None

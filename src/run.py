@@ -41,15 +41,15 @@ Transition = namedtuple('Transition',
                         ('state', 'action', 'next_state', 'reward'))
 
 # hyperparameters
-BATCH_SIZE = 128
-GAMMA = 0.9
+BATCH_SIZE = 256
+GAMMA = 0.99
 EPS_START = 0.9
-EPS_END = 0.1
-EPS_DECAY = 5000
+EPS_END = 0.05
+EPS_DECAY = 10000
 TAU = 0.005
 LR = 3e-4
-REPORT_INTERVAL = 50 
-num_episodes = 100000
+REPORT_INTERVAL = 500
+num_episodes = 10000
 
 env = BlackjackEnv()
 n_actions = env.action_space.n
@@ -60,7 +60,7 @@ target_net = DQN(n_observations, n_actions).to(device)
 target_net.load_state_dict(policy_net.state_dict())
 
 optimizer = optim.AdamW(policy_net.parameters(), lr=LR, amsgrad=True)
-memory = ReplayMemory(10000)
+memory = ReplayMemory(5000)
 
 steps_done = 0
 
@@ -74,24 +74,28 @@ def select_action(state):
     else:
         return torch.tensor([[env.action_space.sample()]], device=device, dtype=torch.long)
 
-def plot_metrics(show_result=False):
+def plot_metrics(show_result=False, filename='training_progress.png'):
     plt.figure(1)
     balances_t = torch.tensor(env.balances, dtype=torch.float)
+    
     if show_result:
         plt.title('Final Result')
+        filename = 'final_result.png'
     else:
         plt.clf()
         plt.title('Training Progress...')
+    
     plt.xlabel('Episode')
     plt.ylabel('Balance')
-    plt.plot(balances_t.numpy())
-    # plt.pause(0.001)
-    if is_ipython:
-        if not show_result:
-            display.display(plt.gcf())
-            display.clear_output(wait=True)
-        else:
-            display.display(plt.gcf())
+    
+    plt.plot(balances_t.numpy(), linestyle='-', color='blue')  # Line plot
+    
+    plt.ylim([balances_t.min().item(), balances_t.max().item()])
+    
+    plt.savefig(filename)
+    
+    print(f"Plot saved as {filename}")
+
 
 def optimize_model():
     if len(memory) < BATCH_SIZE:
@@ -127,6 +131,7 @@ def optimize_model():
 def run(random_play=False):
     total_reward = 0
     rewards = []
+    thousand_episode_rewards = 0
     
     for i_episode in range(num_episodes):
         state, info = env.reset()
@@ -136,37 +141,41 @@ def run(random_play=False):
             # Handle immediate termination
             reward = torch.tensor([info['reward']], device=device)
             total_reward += reward.item()
-            print(f"Episode {i_episode}/{num_episodes} - Immediate Termination - Reward: {reward.item()}")
-            continue 
-        
-        for t in count():
-            action = select_action(state) if not random_play else torch.tensor([[env.action_space.sample()]], device=device, dtype=torch.long)
-            observation, reward, terminated, truncated, _ = env.step(action.item())
-            reward = torch.tensor([reward], device=device)
-            total_reward += reward.item()
             rewards.append(reward.item())
-            done = terminated or truncated
+        else:
+            for t in count():
+                action = select_action(state) if not random_play else torch.tensor([[env.action_space.sample()]], device=device, dtype=torch.long)
+                observation, reward, terminated, truncated, _ = env.step(action.item())
+                reward = torch.tensor([reward], device=device)
+                total_reward += reward.item()
+                rewards.append(reward.item())
+                done = terminated or truncated
 
-            next_state = None if terminated else torch.tensor(observation, dtype=torch.float32, device=device).unsqueeze(0)
-            memory.push(state, action, next_state, reward)
-            state = next_state
+                next_state = None if terminated else torch.tensor(observation, dtype=torch.float32, device=device).unsqueeze(0)
+                memory.push(state, action, next_state, reward)
+                state = next_state
 
-            optimize_model()
+                optimize_model()
 
-            # soft update of target network
-            target_net_state_dict = target_net.state_dict()
-            policy_net_state_dict = policy_net.state_dict()
-            for key in policy_net_state_dict:
-                target_net_state_dict[key] = policy_net_state_dict[key] * TAU + target_net_state_dict[key] * (1 - TAU)
-            target_net.load_state_dict(target_net_state_dict)
+                # soft update of target network
+                target_net_state_dict = target_net.state_dict()
+                policy_net_state_dict = policy_net.state_dict()
+                for key in policy_net_state_dict:
+                    target_net_state_dict[key] = policy_net_state_dict[key] * TAU + target_net_state_dict[key] * (1 - TAU)
+                target_net.load_state_dict(target_net_state_dict)
 
-            if done:
-                env.balances.append(total_reward)
-                if i_episode % REPORT_INTERVAL == 0:
-                    print(f"Episode {i_episode}/{num_episodes} - Total Reward: {total_reward} - Average Reward: {sum(rewards) / REPORT_INTERVAL}")
-                    rewards = []
-                break
-
+                if done:
+                    break
+        
+        # env.balances.append(total_reward)
+        if i_episode % REPORT_INTERVAL == 0:
+            sum_rewards = sum(rewards)
+            print(f"Episode {i_episode}/{num_episodes} - Total Reward: {total_reward} - Average Reward: {sum_rewards / REPORT_INTERVAL}")
+            thousand_episode_rewards += sum_rewards
+            rewards = []
+            if i_episode % 1000 == 0:
+                print(f"\nAverage Reward for last 1000 episodes: {thousand_episode_rewards / 1000}\n")
+                thousand_episode_rewards = 0
 run()
 
 torch.save(policy_net.state_dict(), f'./models/model_{num}_policy_net.pth')
@@ -179,5 +188,5 @@ torch.save({
 print(f'Model saved as model_{num}.pth')
 
 plot_metrics(show_result=True)
-plt.ioff()
-plt.show()
+# plt.ioff()
+# plt.show()

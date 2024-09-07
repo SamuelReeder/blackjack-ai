@@ -43,15 +43,20 @@ def human_action(valid_actions):
 def play_game(instance):
     
     bet = place_bet()
-    state, game_over = instance.new_game(bet)
+    state, game_over, info = instance.new_game(bet)
     print("\n=== Game Start ===")
     
+    if 'game_over' in info and info['game_over']:
+        print("Blackjack!")
+        print(f"You Win! Your reward: {bet * 2.5}")
+        print(f"Final Player Balance: {instance.player.balance}")
+        return
 
     while True:
         
         player_hand_value = state[0]
         player_cards = instance.player.hands[0].cards
-        dealer_visible_card = instance.dealer.hand.cards[0]
+        dealer_visible_card = instance.dealer.hand.calculate_value(hide_dealer=True)
 
         print(f"Your Hand: {format_hand(player_cards)} (Value: {player_hand_value})")
         print(f"Dealer's Visible Card: {dealer_visible_card}\n")
@@ -59,7 +64,7 @@ def play_game(instance):
         
         if game_over:
             print("Blackjack!")
-            print(f"You Win! Your reward: {bet * 2.5}")
+            print(f"You Win! Your reward: {bet * 1.5}")
             print(f"Final Player Balance: {instance.player.balance}")
             break
         
@@ -69,7 +74,8 @@ def play_game(instance):
         action = human_action(valid_actions)
 
         state, reward, done, truncated, info = instance.play_game(action)
-
+        print(f"State: {state}")
+        
         if done or truncated:
             
             player_hand_value = state[0]
@@ -80,9 +86,9 @@ def play_game(instance):
             print(f"Dealer's Final Hand: {format_hand(instance.dealer.hand.cards)} (Value: {instance.dealer.hand.calculate_value()})")
             print(f"Your Final Hand: {format_hand(instance.player.hands[0].cards)} (Value: {state[0]})")
 
-            if reward > bet:
+            if reward >= bet:
                 print(f"\nYou Win! Your reward: {reward}")
-            elif reward == bet:
+            elif reward == 0:
                 print(f"\nPush! No money lost.")
             else:
                 print(f"\nYou Lose! Your loss: {bet}")
